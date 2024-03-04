@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:online_groceries/common_widget/round_button.dart';
+import 'package:online_groceries/view/search/filter_parameters.dart';
 
 import '../../common/color_extension.dart';
 import '../../common_widget/filter_row.dart';
@@ -13,6 +14,8 @@ class FilterView extends StatefulWidget {
 
 class _FilterViewState extends State<FilterView> {
   List selectArr = [];
+
+  RangeValues _priceRange = const RangeValues(0, 100);
 
   List filterCatArr = [
     {
@@ -85,71 +88,52 @@ class _FilterViewState extends State<FilterView> {
                   topLeft: Radius.circular(20), topRight: Radius.circular(20))),
           child: Column(
             children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text(
-                          "Categories",
-                          style: TextStyle(
-                              color: TColor.primaryText,
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600),
-                        ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Price Range",
+                      style: TextStyle(
+                        color: TColor.primaryText,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
                       ),
-                      Column(
-                        children: filterCatArr.map((fObj) {
-                          return FilterRow(
-                            fObj: fObj,
-                            isSelect: selectArr.contains(fObj),
-                            onPressed: () {
-                              if (selectArr.contains(fObj)) {
-                                selectArr.remove(fObj);
-                              } else {
-                                selectArr.add(fObj);
-                              }
-                              setState(() {});
-                            },
-                          );
-                        }).toList(),
-                      ),
+                    ),
+                    SizedBox(height: 10),
 
-                     const SizedBox(height: 15,),
+                    // Min Price Text
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Min Price: \$${_priceRange.start.toStringAsFixed(2)}"),
+                        Text("Max Price: \$${_priceRange.end.toStringAsFixed(2)}"),
+                      ],
+                    ),
 
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text(
-                          "Brand",
-                          style: TextStyle(
-                              color: TColor.primaryText,
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                      Column(
-                        children: filterBrandArr.map((fObj) {
-                          return FilterRow(
-                            fObj: fObj,
-                            isSelect: selectArr.contains(fObj),
-                            onPressed: () {
-                              if (selectArr.contains(fObj)) {
-                                selectArr.remove(fObj);
-                              } else {
-                                selectArr.add(fObj);
-                              }
-                              setState(() {});
-                            },
-                          );
-                        }).toList(),
-                      )
-                    ],
-                  ),
+                    // Price Range Slider
+                    RangeSlider(
+                      values: _priceRange,
+                      onChanged: (RangeValues values) {
+                        setState(() {
+                          _priceRange = values;
+                        });
+                      },
+                      min: _priceRange.start,
+                      max: _priceRange.end,
+                      divisions: 100,
+                      labels: RangeLabels('\$${_priceRange.start}', '\$${_priceRange.end}'),
+                    ),
+                  ],
                 ),
               ),
-              RoundButton(title: "Apply Filter", onPressed: () {})
+              RoundButton(title: "Apply Filter", onPressed: () {
+                Navigator.pop(context, FilterParameters(
+                  minPrice: _priceRange.start.toString(),
+                  maxPrice: _priceRange.end.toString(),
+                ));
+              })
             ],
           ),
         ));

@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:online_groceries/common/globs.dart';
 import 'package:online_groceries/common/service_call.dart';
+import 'package:online_groceries/model/product_detail_model.dart';
+import 'package:online_groceries/view/search/filter_parameters.dart';
 
 import '../model/offer_product_model.dart';
 import '../model/type_model.dart';
@@ -12,6 +14,8 @@ class HomeViewModel extends GetxController {
   final RxList<OfferProductModel> bestSellingArr = <OfferProductModel>[].obs;
   final RxList<TypeModel> groceriesArr = <TypeModel>[].obs;
   final RxList<OfferProductModel> listArr = <OfferProductModel>[].obs;
+
+  final RxList<OfferProductModel> listArrSearch = <OfferProductModel>[].obs;
 
   final isLoading = false.obs;
 
@@ -75,5 +79,37 @@ class HomeViewModel extends GetxController {
       Get.snackbar(Globs.appName, err.toString());
     });
   }
+
+  void serviceCallListSearch(String keyword, FilterParameters filterParams) {
+    Globs.showHUD();
+    print((filterParams?.minPrice ?? 0).toString());
+    ServiceCall.post(
+      {
+        "keyword": keyword,
+        "minPrice": filterParams.minPrice,
+        "maxPrice": filterParams.maxPrice,
+      }, // Pass the keyword to the API
+      SVKey.svSearchProduct,
+      isToken: true,
+      withSuccess: (resObj) async {
+        Globs.hideHUD();
+
+        if (resObj[KKey.status] == "1") {
+          var listDataArr = (resObj[KKey.payload] as List? ?? []).map((oObj) {
+            return OfferProductModel.fromJson(oObj);
+          }).toList();
+
+          listArrSearch.value = listDataArr;
+        } else {
+          // Handle other cases if needed
+        }
+      },
+      failure: (err) async {
+        Globs.hideHUD();
+        Get.snackbar(Globs.appName, err.toString());
+      },
+    );
+  }
+
 
 }
