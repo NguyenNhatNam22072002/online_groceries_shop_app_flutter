@@ -80,7 +80,7 @@ class Globs {
 }
 
 class SVKey {
-  static const mainUrl = "http://192.168.1.152:3001";
+  static const mainUrl = "http://192.168.1.155:3001";
   static const baseUrl = '$mainUrl/api/app/';
   static const nodeUrl = mainUrl;
 

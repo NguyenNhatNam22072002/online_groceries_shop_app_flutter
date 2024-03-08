@@ -1,7 +1,5 @@
 class FilterParameters {
-  final String minPrice;
-  final String maxPrice;
-
-  FilterParameters({required this.minPrice, required this.maxPrice});
+  static String minPrice = "0";
+  static String maxPrice = "100";
 
 }

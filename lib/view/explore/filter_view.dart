@@ -15,7 +15,7 @@ class FilterView extends StatefulWidget {
 class _FilterViewState extends State<FilterView> {
   List selectArr = [];
 
-  RangeValues _priceRange = const RangeValues(0, 100);
+  RangeValues _priceRange = RangeValues(double.parse(FilterParameters.minPrice),  double.parse(FilterParameters.maxPrice));
 
   List filterCatArr = [
     {
@@ -120,8 +120,8 @@ class _FilterViewState extends State<FilterView> {
                           _priceRange = values;
                         });
                       },
-                      min: _priceRange.start,
-                      max: _priceRange.end,
+                      min: 0,
+                      max: 100,
                       divisions: 100,
                       labels: RangeLabels('\$${_priceRange.start}', '\$${_priceRange.end}'),
                     ),
@@ -129,10 +129,9 @@ class _FilterViewState extends State<FilterView> {
                 ),
               ),
               RoundButton(title: "Apply Filter", onPressed: () {
-                Navigator.pop(context, FilterParameters(
-                  minPrice: _priceRange.start.toString(),
-                  maxPrice: _priceRange.end.toString(),
-                ));
+                Navigator.pop(context);
+                FilterParameters.minPrice = _priceRange.start.toString();
+                FilterParameters.maxPrice = _priceRange.end.toString();
               })
             ],
           ),

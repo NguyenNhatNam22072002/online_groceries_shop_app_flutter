@@ -25,8 +25,6 @@ class _HomeViewState extends State<HomeView> {
   TextEditingController txtSearch = TextEditingController();
   String keyword = "";
 
-  late FilterParameters filterParams;
-
   // Add a boolean variable to track whether a search is performed
   bool isSearching = false;
 
@@ -35,7 +33,6 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-    filterParams = FilterParameters(minPrice: "0", maxPrice: "100");
     print("NAMNAMNAM");
   }
 
@@ -145,7 +142,7 @@ class _HomeViewState extends State<HomeView> {
                               keyword = txtSearch.text;
                             }
                             );
-                            homeVM.serviceCallListSearch(keyword, filterParams);
+                            homeVM.serviceCallListSearch(keyword);
                           }
                         },
                       ),
@@ -156,23 +153,20 @@ class _HomeViewState extends State<HomeView> {
                           height: 20,
                         ),
                         onPressed: () async  {
-                          FilterParameters filterParams2 = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const FilterView(),
-                            ),
-                          );
-                          if (filterParams2 != null)  {
+                          {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => FilterView()));
                             setState(() {
-                              print('Before setState: ${homeVM.listArrSearch.length}');
+                              print('Before setState: ${homeVM.listArrSearch
+                                  .length}');
+                              homeVM.serviceCallListSearch(keyword);
                               isSearching = true;
-                              filterParams = filterParams2;
-                              print(filterParams.minPrice);
-                              homeVM.serviceCallListSearch(keyword, filterParams);
-                              print('After setState: ${homeVM.listArrSearch.length}');
+                              print("Home :" + FilterParameters.minPrice);
+                              print('After setState: ${homeVM.listArrSearch
+                                  .length}');
                             });
+                            homeVM.serviceCallListSearch(keyword);
                           }
-                          },
+                        },
                       ),
                     ],
                   ),
@@ -194,7 +188,7 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget buildSearchedList() {
+  Widget buildSearchedList()  {
     return Column(
       children: [
         Padding(

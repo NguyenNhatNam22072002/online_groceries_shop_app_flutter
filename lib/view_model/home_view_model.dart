@@ -80,14 +80,13 @@ class HomeViewModel extends GetxController {
     });
   }
 
-  void serviceCallListSearch(String keyword, FilterParameters filterParams) {
+  void serviceCallListSearch(String keyword) {
     Globs.showHUD();
-    print((filterParams?.minPrice ?? 0).toString());
     ServiceCall.post(
       {
         "keyword": keyword,
-        "minPrice": filterParams.minPrice,
-        "maxPrice": filterParams.maxPrice,
+        "minPrice": FilterParameters.minPrice,
+        "maxPrice": FilterParameters.maxPrice,
       }, // Pass the keyword to the API
       SVKey.svSearchProduct,
       isToken: true,
@@ -98,8 +97,9 @@ class HomeViewModel extends GetxController {
           var listDataArr = (resObj[KKey.payload] as List? ?? []).map((oObj) {
             return OfferProductModel.fromJson(oObj);
           }).toList();
-
+          print("Before update: ${listArrSearch.length}");
           listArrSearch.value = listDataArr;
+          print("After update: ${listArrSearch.length}");
         } else {
           // Handle other cases if needed
         }
