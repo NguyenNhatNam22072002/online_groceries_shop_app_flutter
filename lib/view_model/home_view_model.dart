@@ -28,52 +28,121 @@ class HomeViewModel extends GetxController {
       print("HomeViewModel Init ");
     }
 
-    serviceCallHome();
-   
+    serviceCallHomeExlusiveOffer();
+    serviceCallHomeBestSelling();
+    serviceCallHomeGroceries();
+    serviceCallHomeAllProducts();
+
   }
 
+  int _currentExlusiveOfferPage = 0;
   //ServiceCall
-  void serviceCallHome() {
+  void serviceCallHomeExlusiveOffer() {
+
+    _currentExlusiveOfferPage++;
 
     Globs.showHUD();
     ServiceCall.post({
-      
-    }, SVKey.svHome, isToken: true, withSuccess: (resObj) async {
+      'page': _currentExlusiveOfferPage.toString(),
+    }, SVKey.svHomeExlusiveOffer, isToken: true, withSuccess: (resObj) async {
       Globs.hideHUD();
 
       if (resObj[KKey.status] == "1") {
         var payload = resObj[KKey.payload] as Map? ?? {};
-        
 
         var offerDataArr = (payload["offer_list"] as List? ?? []).map((oObj) {
             return OfferProductModel.fromJson(oObj);
         }).toList();
-
         offerArr.value = offerDataArr;
+      } else {}
+      
+    }, failure: (err) async {
+      Globs.hideHUD();
+      Get.snackbar(Globs.appName, err.toString());
+    });
+  }
+
+  int _currentBestSellingPage = 0;
+
+  void serviceCallHomeBestSelling() {
+
+    _currentBestSellingPage++;
+
+    Globs.showHUD();
+    ServiceCall.post({
+      'page': _currentBestSellingPage.toString(),
+    }, SVKey.svHomeBestSelling, isToken: true, withSuccess: (resObj) async {
+      Globs.hideHUD();
+
+      if (resObj[KKey.status] == "1") {
+        var payload = resObj[KKey.payload] as Map? ?? {};
 
         var bestSellingDataArr = (payload["best_sell_list"] as List? ?? []).map((oObj) {
           return OfferProductModel.fromJson(oObj);
         }).toList();
 
-        bestSellingArr.value = bestSellingDataArr;
+        bestSellingArr.addAll(bestSellingDataArr);
 
-         var typeDataArr =
-            (payload["type_list"] as List? ?? []).map((oObj) {
+      } else {}
+
+    }, failure: (err) async {
+      Globs.hideHUD();
+      Get.snackbar(Globs.appName, err.toString());
+    });
+  }
+
+  void serviceCallHomeGroceries() {
+
+    Globs.showHUD();
+    ServiceCall.post({
+
+    }, SVKey.svHomeGroceries, isToken: true, withSuccess: (resObj) async {
+      Globs.hideHUD();
+
+      if (resObj[KKey.status] == "1") {
+        var payload = resObj[KKey.payload] as Map? ?? {};
+
+        var typeDataArr =
+        (payload["type_list"] as List? ?? []).map((oObj) {
           return TypeModel.fromJson(oObj);
         }).toList();
 
         groceriesArr.value = typeDataArr;
 
-         var listDataArr =
-            (payload["list"] as List? ?? []).map((oObj) {
+      } else {}
+
+
+    }, failure: (err) async {
+      Globs.hideHUD();
+      Get.snackbar(Globs.appName, err.toString());
+    });
+  }
+
+  int _currentAllPage = 0;
+
+  void serviceCallHomeAllProducts() {
+    // Increment the current page
+    _currentAllPage++;
+
+    // Perform the service call to fetch more items using the updated page number
+    Globs.showHUD();
+    ServiceCall.post({
+      'page': _currentAllPage.toString(),
+    }, SVKey.svHomeAllProducts, isToken: true, withSuccess: (resObj) async {
+      Globs.hideHUD();
+
+      if (resObj[KKey.status] == '1') {
+        var payload = resObj[KKey.payload] as Map? ?? {};
+
+        var moreItems = (payload['list'] as List? ?? []).map((oObj) {
           return OfferProductModel.fromJson(oObj);
         }).toList();
 
-        listArr.value = listDataArr;
-       
-      } else {}
-
-      
+        // Append the new items to the existing list
+        listArr.addAll(moreItems);
+      } else {
+        // Handle other cases if needed
+      }
     }, failure: (err) async {
       Globs.hideHUD();
       Get.snackbar(Globs.appName, err.toString());
@@ -110,6 +179,5 @@ class HomeViewModel extends GetxController {
       },
     );
   }
-
 
 }

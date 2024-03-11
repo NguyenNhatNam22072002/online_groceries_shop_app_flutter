@@ -86,7 +86,11 @@ class SVKey {
 
   static const svLogin = '${baseUrl}login';
   static const svSignUp = '${baseUrl}sign_up';
-  static const svHome = '${baseUrl}home';
+  static const svHomeExlusiveOffer = '${baseUrl}home_exlusive_offer';
+  static const svHomeBestSelling = '${baseUrl}home_best_selling';
+  static const svHomeGroceries = '${baseUrl}home_groceries';
+  static const svHomeAllProducts = '${baseUrl}home_all_products';
+
   static const svProductDetail = '${baseUrl}product_detail';
   static const svAddRemoveFavorite = '${baseUrl}add_remove_favorite';
   static const svFavorite = '${baseUrl}favorite_list';

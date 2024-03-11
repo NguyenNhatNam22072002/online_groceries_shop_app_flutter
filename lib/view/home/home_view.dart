@@ -5,6 +5,7 @@ import 'package:online_groceries/view/explore/filter_view.dart';
 import 'package:online_groceries/view/home/product_details_view.dart';
 import 'package:online_groceries/view/login/login_view.dart';
 import 'package:online_groceries/view/search/filter_parameters.dart';
+import 'package:online_groceries/view_model/product_cell2.dart';
 
 import '../../common/color_extension.dart';
 import '../../common_widget/category_cell.dart';
@@ -21,6 +22,12 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+
+  final ScrollController _searchListScrollController = ScrollController();
+  final ScrollController _offerListScrollController = ScrollController();
+  final ScrollController _bestSellingListScrollController = ScrollController();
+  final ScrollController _allproductsscrollController = ScrollController();
+
   bool isLoggedIn = false;
   TextEditingController txtSearch = TextEditingController();
   String keyword = "";
@@ -33,11 +40,40 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
+    _allproductsscrollController.addListener(_onAllProductScroll);
     print("NAMNAMNAM");
+  }
+
+  void _onSearchScroll() {
+    if (_searchListScrollController.position.pixels ==
+        _searchListScrollController.position.maxScrollExtent) {
+      homeVM.serviceCallListSearch(keyword);
+    }
+  }
+
+  void _onOfferListScroll() {
+    if (_offerListScrollController.position.pixels ==
+        _offerListScrollController.position.maxScrollExtent) {
+      homeVM.serviceCallHomeExlusiveOffer();
+    }
+  }
+  void _onBestSellingScroll() {
+    if (_bestSellingListScrollController.position.pixels ==
+        _bestSellingListScrollController.position.maxScrollExtent) {
+      homeVM.serviceCallHomeBestSelling();
+    }
+  }
+
+  void _onAllProductScroll() {
+    if (_allproductsscrollController.position.pixels ==
+        _allproductsscrollController.position.maxScrollExtent) {
+      homeVM.serviceCallHomeAllProducts();
+    }
   }
 
   @override
   void dispose() {
+    _allproductsscrollController.dispose();
     Get.delete<HomeViewModel>();
     super.dispose();
   }
@@ -207,6 +243,7 @@ class _HomeViewState extends State<HomeView> {
           child: Obx(
                 () =>
                 ListView.builder(
+                  controller: _searchListScrollController,
                   scrollDirection: Axis.horizontal,
                   padding:
                   const EdgeInsets.symmetric(horizontal: 15),
@@ -222,7 +259,11 @@ class _HomeViewState extends State<HomeView> {
                               pObj: pObj,
                             ));
 
-                        homeVM.serviceCallHome();
+                        homeVM.serviceCallHomeExlusiveOffer();
+                        homeVM.serviceCallHomeBestSelling();
+                        homeVM.serviceCallHomeGroceries();
+                        homeVM.serviceCallHomeAllProducts();
+
                       },
                       onCart: () {
                         CartViewModel.serviceCallAddToCart(
@@ -264,6 +305,7 @@ class _HomeViewState extends State<HomeView> {
           child: Obx(
                 () =>
                 ListView.builder(
+                    controller: _offerListScrollController,
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     itemCount: homeVM.offerArr.length,
@@ -278,7 +320,10 @@ class _HomeViewState extends State<HomeView> {
                                 pObj: pObj,
                               ));
 
-                          homeVM.serviceCallHome();
+                          homeVM.serviceCallHomeExlusiveOffer();
+                          homeVM.serviceCallHomeBestSelling();
+                          homeVM.serviceCallHomeGroceries();
+                          homeVM.serviceCallHomeAllProducts();
                         },
                         onCart: () {
                           CartViewModel.serviceCallAddToCart(
@@ -301,6 +346,7 @@ class _HomeViewState extends State<HomeView> {
           child: Obx(
                 () =>
                 ListView.builder(
+                    controller: _bestSellingListScrollController,
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     itemCount: homeVM.bestSellingArr.length,
@@ -315,7 +361,10 @@ class _HomeViewState extends State<HomeView> {
                                 pObj: pObj,
                               ));
 
-                          homeVM.serviceCallHome();
+                          homeVM.serviceCallHomeExlusiveOffer();
+                          homeVM.serviceCallHomeBestSelling();
+                          homeVM.serviceCallHomeGroceries();
+                          homeVM.serviceCallHomeAllProducts();
                         },
                         onCart: () {
                           CartViewModel.serviceCallAddToCart(
@@ -355,6 +404,7 @@ class _HomeViewState extends State<HomeView> {
           child: Obx(
                 () =>
                 ListView.builder(
+                    controller: _allproductsscrollController,
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     itemCount: homeVM.listArr.length,
@@ -369,7 +419,10 @@ class _HomeViewState extends State<HomeView> {
                                 pObj: pObj,
                               ));
 
-                          homeVM.serviceCallHome();
+                          homeVM.serviceCallHomeExlusiveOffer();
+                          homeVM.serviceCallHomeBestSelling();
+                          homeVM.serviceCallHomeGroceries();
+                          homeVM.serviceCallHomeAllProducts();
                         },
                         onCart: () {
                           CartViewModel.serviceCallAddToCart(
@@ -414,10 +467,11 @@ class _HomeViewState extends State<HomeView> {
           height: 230,
           child: Obx(
                 () => ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                itemCount: homeVM.offerArr.length,
-                itemBuilder: (context, index) {
+                    controller: _offerListScrollController,
+                    scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  itemCount: homeVM.offerArr.length,
+                  itemBuilder: (context, index) {
                   var pObj = homeVM.offerArr[index] ;
                   print("Trái cây");
                   return ProductCell(
@@ -427,7 +481,10 @@ class _HomeViewState extends State<HomeView> {
                         pObj: pObj,
                       ));
 
-                      homeVM.serviceCallHome();
+                      homeVM.serviceCallHomeExlusiveOffer();
+                      homeVM.serviceCallHomeBestSelling();
+                      homeVM.serviceCallHomeGroceries();
+                      homeVM.serviceCallHomeAllProducts();
                     },
                     onCart: () {
                       CartViewModel.serviceCallAddToCart( pObj.prodId ?? 0  , 1, () {
@@ -448,7 +505,8 @@ class _HomeViewState extends State<HomeView> {
           height: 230,
           child: Obx(
                 () => ListView.builder(
-                scrollDirection: Axis.horizontal,
+                    controller: _bestSellingListScrollController,
+                    scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 itemCount: homeVM.bestSellingArr.length,
                 itemBuilder: (context, index) {
@@ -461,7 +519,10 @@ class _HomeViewState extends State<HomeView> {
                         pObj: pObj,
                       ));
 
-                      homeVM.serviceCallHome();
+                      homeVM.serviceCallHomeExlusiveOffer();
+                      homeVM.serviceCallHomeBestSelling();
+                      homeVM.serviceCallHomeGroceries();
+                      homeVM.serviceCallHomeAllProducts();
                     },
                     onCart: () {
                       CartViewModel.serviceCallAddToCart(
@@ -480,7 +541,7 @@ class _HomeViewState extends State<HomeView> {
           height: 100,
           child: Obx(
                 () =>  ListView.builder(
-                scrollDirection: Axis.horizontal,
+                    scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 itemCount: homeVM.groceriesArr.length,
                 itemBuilder: (context, index) {
@@ -499,7 +560,8 @@ class _HomeViewState extends State<HomeView> {
           height: 230,
           child: Obx(
                 () => ListView.builder(
-                scrollDirection: Axis.horizontal,
+                    controller: _allproductsscrollController,
+                    scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 itemCount: homeVM.listArr.length,
                 itemBuilder: (context, index) {
@@ -513,7 +575,10 @@ class _HomeViewState extends State<HomeView> {
                         pObj: pObj,
                       ));
 
-                      homeVM.serviceCallHome();
+                      homeVM.serviceCallHomeExlusiveOffer();
+                      homeVM.serviceCallHomeBestSelling();
+                      homeVM.serviceCallHomeGroceries();
+                      homeVM.serviceCallHomeAllProducts();
                     },
                     onCart: () {
                       CartViewModel.serviceCallAddToCart(
