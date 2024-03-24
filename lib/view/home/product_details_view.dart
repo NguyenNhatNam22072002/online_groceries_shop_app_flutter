@@ -2,6 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
+import 'package:online_groceries/view/home/review_list_view.dart';
+import 'package:online_groceries/view_model/review_view_model.dart';
 
 import '../../common/color_extension.dart';
 import '../../common_widget/round_button.dart';
@@ -19,6 +21,10 @@ class ProductDetails extends StatefulWidget {
 
 class _ProductDetailsState extends State<ProductDetails> {
   late ProductDetailViewMode detailVM;
+
+  final reviewVM = Get.put(ReviewViewModel());
+
+  bool showReviewList = false; // Thêm trạng thái
 
   @override
   void initState() {
@@ -364,7 +370,20 @@ class _ProductDetailsState extends State<ProductDetails> {
                         ),
                       ),
                       IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            reviewVM.fetchProductReviews(widget.pObj.prodId.toString()!);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Scaffold(
+                                  appBar: AppBar(
+                                    title: Text('Review List'),
+                                  ),
+                                  body: ReviewListView(reviewList: reviewVM.reviewList),
+                                ),
+                              ),
+                            );
+                          },
                           icon: Image.asset(
                             "assets/img/next.png",
                             width: 15,
@@ -373,6 +392,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                           )),
                     ],
                   ),
+                  if (showReviewList) // Hiển thị danh sách đánh giá nếu showReviewList là true
+                    ReviewListView(reviewList: reviewVM.reviewList),
                   const SizedBox(
                     height: 8,
                   ),

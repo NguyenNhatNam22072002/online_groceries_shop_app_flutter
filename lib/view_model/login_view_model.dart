@@ -51,6 +51,15 @@ class LoginViewModel extends GetxController {
         if( resObj[KKey.status] == "1"  ) {
           var payload = resObj[KKey.payload] as Map? ?? {};
 
+          // Sau khi đăng nhập thành công và nhận được auth_token từ phản hồi
+          String authToken = payload['auth_token']; // Thay 'your_auth_token_here' bằng auth_token nhận được từ phản hồi
+
+          // In ra auth_token
+          print('Auth token: $authToken');
+
+          // Lưu trữ auth_token
+          Globs.saveAuthToken(authToken);
+
           Globs.udSet(payload, Globs.userPayload);
           Globs.udBoolSet(true, Globs.userLogin);
           

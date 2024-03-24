@@ -183,6 +183,7 @@ class _MyOrdersDetailViewState extends State<MyOrdersDetailView> {
                     var pObj = detailVM.cartList[index];
                     return OrderItemRow(
                       pObj: pObj,
+                      allowReview: widget.mObj.orderStatus == 3,
                     );
                   },
                   itemCount: detailVM.cartList.length),

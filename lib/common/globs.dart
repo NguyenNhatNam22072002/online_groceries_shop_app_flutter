@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -6,7 +7,20 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 
 import '../main.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class Globs {
+  static Future<void> saveAuthToken(String authToken) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('auth_token', authToken);
+  }
+
+  // Phương thức để lấy auth_token từ SharedPreferences
+  static Future<String?> getAuthToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('auth_token');
+  }
+
   static const appName = "Online Groceries";
 
   static const userPayload = "user_payload";
@@ -80,7 +94,9 @@ class Globs {
 }
 
 class SVKey {
-  static const mainUrl = "http://192.168.1.155:3001";
+  static const mainUrl = "http://192.168.1.151:3001";
+
+  // Hàm để lấy IPv4 Address từ thiết bị
   static const baseUrl = '$mainUrl/api/app/';
   static const nodeUrl = mainUrl;
 
@@ -113,6 +129,10 @@ class SVKey {
   static const svRemovePaymentMethod = '${baseUrl}remove_payment_method';
   static const svPaymentMethodList = '${baseUrl}payment_method';
 
+  static const svReviewsList = '${baseUrl}product_reviews';
+  static const svAddReview = '${baseUrl}add_product_review';
+  static const svUserInfo = '${baseUrl}user_info';
+
   static const svMarkDefaultDeliveryAddress = '${baseUrl}mark_default_delivery_address';
 
   static const svPromoCodeList = '${baseUrl}promo_code_list';
@@ -127,6 +147,14 @@ class SVKey {
   static const svForgotPasswordRequest = '${baseUrl}forgot_password_request';
   static const svForgotPasswordVerify = '${baseUrl}forgot_password_verify';
   static const svForgotPasswordSetPassword = '${baseUrl}forgot_password_set_password';
+
+  //admin
+  static const adminUrl = '$mainUrl/api/admin/';
+
+  static const newOrdersList = '${adminUrl}new_orders_list';
+  static const completedOrdersList = '${adminUrl}completed_orders_list';
+  static const cancelDeclineOrdersList = '${adminUrl}cancel_decline_orders_list';
+
 }
 
 class KKey {
