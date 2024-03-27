@@ -2,7 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:online_groceries/common/color_extension.dart';
 import 'package:online_groceries/model/product_detail_model.dart';
+import 'package:online_groceries/view/account/review_state_provider.dart';
 import 'package:online_groceries/view/account/review_view.dart';
+import 'package:provider/provider.dart';
 
 class OrderItemRow extends StatelessWidget {
   final ProductDetailModel pObj;
@@ -12,6 +14,10 @@ class OrderItemRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final reviewStateProvider = Provider.of<ReviewStateProvider>(context);
+    final reviewState = reviewStateProvider.getReviewState(pObj.prodId);
+
     return InkWell(
       child: Container(
         height: 100,
@@ -121,15 +127,32 @@ class OrderItemRow extends StatelessWidget {
             Positioned(
               top: 0,
               right: 0,
-              child: allowReview // Kiểm tra giá trị allowReview
+              child: reviewState == ReviewState.reviewed
                   ? Padding(
+                padding: const EdgeInsets.all(0.5),
+                child: ElevatedButton(
+                  onPressed: null,
+                  child: Text(
+                    'Reviewed',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.grey,
+                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                  ),
+                ),
+              )
+                  : Padding(
                 padding: const EdgeInsets.all(0.5),
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ProductReviewScreen()),
-                    );
+                      MaterialPageRoute(builder: (context) => ProductReviewScreen(pObj: pObj)),
+                    ).then((_) {
+                      // Sau khi quay lại từ trang đánh giá, cập nhật trạng thái đã đánh giá và thông báo cho Provider
+                      reviewStateProvider.setReviewState(pObj.prodId, ReviewState.reviewed);
+                    });
                   },
                   child: Text(
                     'Review',
@@ -140,8 +163,7 @@ class OrderItemRow extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                   ),
                 ),
-              )
-                  : SizedBox(), // Nếu allowReview là false, ẩn nút "Review"
+              ),
             ),
 
           ],

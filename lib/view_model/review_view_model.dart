@@ -46,28 +46,36 @@ class ReviewViewModel extends GetxController {
   }
 
 
-// void addProductReview(Map<String, dynamic> reviewData) async {
-  //   try {
-  //     isLoading.value = true;
-  //     var url = Uri.parse('http://your_api_base_url/api/app/add_product_review');
-  //     var response = await http.post(url, body: reviewData);
-  //
-  //     if (response.statusCode == 200) {
-  //       var jsonResponse = json.decode(response.body);
-  //       if (jsonResponse['status'] == '1') {
-  //         // Refresh reviews after adding a new one
-  //         fetchProductReviews(reviewData['product_id']);
-  //       } else {
-  //         // Handle error message
-  //         print(jsonResponse['message']);
-  //       }
-  //     } else {
-  //       print('Request failed with status: ${response.statusCode}.');
-  //     }
-  //   } catch (e) {
-  //     print('Exception occurred while adding review: $e');
-  //   } finally {
-  //     isLoading.value = false;
-  //   }
-  // }
+  void addProductReview(int uid, int prodid, String cmt, int rating, String uName) async {
+    // Kiểm tra xem các giá trị có null không
+    if (prodid == null || uid == null || cmt == null || rating == null || uName == null) {
+      Get.snackbar(Globs.appName, "Please provide all necessary information");
+      return; // Dừng hàm nếu có bất kỳ giá trị nào là null
+    }
+
+    Globs.showHUD();
+    // Tạo dữ liệu gửi đi
+    Map<String, dynamic> requestData = {
+      "user_id": uid.toString(),
+      "product_id": prodid.toString(),
+      "comment": cmt.toString(),
+      "rating": rating.toString(),
+      "user_name": uName.toString(),
+    };
+
+    ServiceCall.post(requestData, SVKey.svAddReview, isToken: true,
+        withSuccess: (resObj) async {
+          Globs.hideHUD();
+
+          if (resObj[KKey.status] == "1") {
+            Get.snackbar(Globs.appName, resObj[KKey.message]);
+          } else {
+            // Xử lý trường hợp không thành công nếu cần
+          }
+        }, failure: (err) async {
+          Globs.hideHUD();
+          Get.snackbar(Globs.appName, err.toString());
+        });
+  }
+
 }

@@ -53,12 +53,16 @@ class LoginViewModel extends GetxController {
 
           // Sau khi đăng nhập thành công và nhận được auth_token từ phản hồi
           String authToken = payload['auth_token']; // Thay 'your_auth_token_here' bằng auth_token nhận được từ phản hồi
+          int userId = payload['user_id'];
+          String userName = payload['username'];
 
           // In ra auth_token
-          print('Auth token: $authToken');
+          print('user ID: $userName');
 
           // Lưu trữ auth_token
           Globs.saveAuthToken(authToken);
+          Globs.saveUsername(userName);
+          Globs.saveUserId(userId);
 
           Globs.udSet(payload, Globs.userPayload);
           Globs.udBoolSet(true, Globs.userLogin);

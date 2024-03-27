@@ -21,6 +21,26 @@ class Globs {
     return prefs.getString('auth_token');
   }
 
+  static Future<void> saveUsername(String userName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('user_name', userName);
+  }
+
+  static Future<String?> getUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('user_name');
+  }
+
+  static Future<void> saveUserId(int userId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('user_id', userId);
+  }
+
+  static Future<int?> getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('user_id');
+  }
+
   static const appName = "Online Groceries";
 
   static const userPayload = "user_payload";

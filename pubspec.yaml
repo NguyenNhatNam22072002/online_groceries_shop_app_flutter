@@ -47,6 +47,7 @@ dependencies:
   email_auth: ^1.1.1
   mailer: ^6.1.0
   crypto: ^3.0.3
+  provider: ^6.1.2
 dependency_overrides:
   intl: ^0.18.1
 

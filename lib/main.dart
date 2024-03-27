@@ -3,20 +3,28 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:online_groceries/view/account/review_state_provider.dart';
 import 'package:online_groceries/view/admin/order_page.dart';
 import 'package:online_groceries/view/main_tabview/main_tabview.dart';
 import 'package:online_groceries/view/splash_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart'; // Thêm import cho Provider
 
 import 'common/color_extension.dart';
 import 'common/my_http_overrides.dart';
 
 SharedPreferences? prefs;
+
 void main() async {
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   prefs = await SharedPreferences.getInstance();
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider( // Bọc ChangeNotifierProvider ở đây
+      create: (context) => ReviewStateProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 void configLoading() {
@@ -34,7 +42,7 @@ void configLoading() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key});
 
   // This widget is the root of your application.
   @override
