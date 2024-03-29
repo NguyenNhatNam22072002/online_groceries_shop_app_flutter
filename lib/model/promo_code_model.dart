@@ -6,7 +6,7 @@ class PromoCodeModel {
   int? type;
   int? minOrderAmount;
   int? maxDiscountAmount;
-  int? offerPrice;
+  String? offerPrice;
   String? startDate;
   String? endDate;
   String? createdDate;

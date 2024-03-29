@@ -4,12 +4,30 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:online_groceries/model/user_model.dart';
 
 import '../main.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Globs {
+
+  // Lưu thông tin người dùng vào SharedPreferences
+  static Future<void> saveUser(UserModel user) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('user', user.toJsonString());
+  }
+
+  // Lấy thông tin người dùng từ SharedPreferences
+  static Future<UserModel?> getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? jsonString = prefs.getString('user');
+    if (jsonString != null && jsonString.isNotEmpty) {
+      return UserModel.fromJsonString(jsonString);
+    }
+    return null;
+  }
+
   static Future<void> saveAuthToken(String authToken) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('auth_token', authToken);
@@ -114,7 +132,7 @@ class Globs {
 }
 
 class SVKey {
-  static const mainUrl = "http://192.168.1.151:3001";
+  static const mainUrl = "http://192.168.1.149:3001";
 
   // Hàm để lấy IPv4 Address từ thiết bị
   static const baseUrl = '$mainUrl/api/app/';
@@ -167,6 +185,9 @@ class SVKey {
   static const svForgotPasswordRequest = '${baseUrl}forgot_password_request';
   static const svForgotPasswordVerify = '${baseUrl}forgot_password_verify';
   static const svForgotPasswordSetPassword = '${baseUrl}forgot_password_set_password';
+
+  static const svAddCoin = '${baseUrl}add_coin_review';
+  static const svUseCoin = '${baseUrl}use_coin_for_order';
 
   //admin
   static const adminUrl = '$mainUrl/api/admin/';

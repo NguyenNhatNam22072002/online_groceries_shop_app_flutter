@@ -3,12 +3,15 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:online_groceries/common_widget/round_button.dart';
+import 'package:online_groceries/model/user_model.dart';
 import 'package:online_groceries/view/account/address_list_view.dart';
 import 'package:online_groceries/view/account/payment_method_view.dart';
 import 'package:online_groceries/view/account/promo_code_view.dart';
 import 'package:online_groceries/view_model/cart_view_model.dart';
+import 'package:online_groceries/view_model/coin_view_model.dart';
 
 import '../../common/color_extension.dart';
+import '../../common/globs.dart';
 import '../../common_widget/checkout_row.dart';
 import 'error_view.dart';
 
@@ -21,6 +24,23 @@ class CheckoutView extends StatefulWidget {
 
 class _CheckoutViewState extends State<CheckoutView> {
   final cartVM = Get.find<CartViewModel>();
+  final coinVM = Get.put(CoinViewModel());
+
+  bool useCoin = false; // Track whether to use coins or not
+  UserModel? user;
+
+  @override
+  void initState() {
+    super.initState();
+    loadUser();
+  }
+
+  Future<void> loadUser() async {
+    UserModel? fetchedUser = await Globs.getUser();
+    setState(() {
+      user = fetchedUser;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -230,6 +250,36 @@ class _CheckoutViewState extends State<CheckoutView> {
                     ));
               },
             ),
+            // Use Coin row
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              child: Row(
+                children: [
+                  Text(
+                    "Use Coin",
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Spacer(),
+                  Switch(
+                    value: useCoin,
+                    onChanged: (value) {
+                      setState(() {
+                        useCoin = value;
+                        // Call a function to update the Final Total based on the useCoin value
+                        if(value == true) cartVM.coin.value = "1.0";
+                        else cartVM.coin.value = "0.0";
+                        cartVM.serviceCallList();
+                        coinVM.useCoin(user!.userId);
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.only(top: 15, right: 5),
               child: Column(
@@ -364,7 +414,7 @@ class _CheckoutViewState extends State<CheckoutView> {
                 title: "Place Order",
                 onPressed: () {
                   cartVM.serviceCallOrderPlace( );
-                
+
                 }),
             const SizedBox(
               height: 15,

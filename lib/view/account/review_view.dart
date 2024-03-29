@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import 'package:online_groceries/common/color_extension.dart';
 import 'package:online_groceries/common/globs.dart';
 import 'package:online_groceries/model/product_detail_model.dart';
+import 'package:online_groceries/model/user_model.dart';
 import 'package:online_groceries/view/account/review_state_provider.dart';
+import 'package:online_groceries/view_model/coin_view_model.dart';
 import 'package:online_groceries/view_model/review_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -44,6 +46,23 @@ class _ProductReviewScreenState extends State<ProductReviewScreen> {
     }
   }
 
+  final coinVM = Get.put(CoinViewModel());
+
+  UserModel? user;
+
+  @override
+  void initState() {
+    super.initState();
+    loadUser();
+  }
+
+  Future<void> loadUser() async {
+    UserModel? fetchedUser = await Globs.getUser();
+    setState(() {
+      user = fetchedUser;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,6 +91,8 @@ class _ProductReviewScreenState extends State<ProductReviewScreen> {
         actions: [
           TextButton(
             onPressed: () async {
+
+              coinVM.addCoin(user!.userId);
 
               int userId = await Globs.getUserId() ?? 0; // Sử dụng await và kiểm tra giá trị trước khi gán cho userId
               // Lấy productId từ đâu đó

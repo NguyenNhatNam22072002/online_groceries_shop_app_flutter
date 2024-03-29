@@ -23,6 +23,7 @@ class CartViewModel extends GetxController {
   final deliveryType = "1".obs;
   final paymentType = "1".obs;
 
+  final coin = "0.0".obs;
   @override
   void onInit() {
     // TODO: implement onInit
@@ -40,7 +41,8 @@ class CartViewModel extends GetxController {
     Globs.showHUD();
     ServiceCall.post({
       "promo_code_id": promoObj.value.promoCodeId?.toString() ?? "",
-      "deliver_type": deliveryType.value
+      "deliver_type": deliveryType.value,
+      "coin": coin.value // Thêm tham số accept vào request
     }, SVKey.svCartList, isToken: true, withSuccess: (resObj) async {
       Globs.hideHUD();
 

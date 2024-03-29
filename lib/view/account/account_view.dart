@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:online_groceries/common/globs.dart';
+import 'package:online_groceries/model/user_model.dart';
 import 'package:online_groceries/view/account/payment_method_view.dart';
 import 'package:online_groceries/view/account/promo_code_view.dart';
 
@@ -18,8 +20,23 @@ class AccountView extends StatefulWidget {
   State<AccountView> createState() => _AccountViewState();
 }
 
-class _AccountViewState extends State<AccountView> {
+class _AccountViewState extends State<AccountView>  {
   final splashVM = Get.find<SplashViewModel>();
+
+  UserModel? user;
+
+  @override
+  void initState() {
+    super.initState();
+    loadUser();
+  }
+
+  Future<void> loadUser() async {
+    UserModel? fetchedUser = await Globs.getUser();
+    setState(() {
+      user = fetchedUser;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,35 +62,78 @@ class _AccountViewState extends State<AccountView> {
                     width: 15,
                   ),
                   Expanded(
-                      child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              user?.username ?? 'Nguyen Nam',
+                              style: TextStyle(
+                                  color: TColor.primaryText,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700),
+                            ),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            Icon(
+                              Icons.edit,
+                              color: TColor.primary,
+                              size: 18,
+                            )
+                          ],
+                        ),
+                        Text(
+                          user?.email ?? "nam@gmail.com",
+                          style: TextStyle(
+                              color: TColor.secondaryText, fontSize: 16),
+                        )
+                      ],
+                    ),
+                  ),
+                  Stack(
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            "Code For Any",
-                            style: TextStyle(
-                                color: TColor.primaryText,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700),
-                          ),
-                          const SizedBox(
-                            width: 8,
-                          ),
-                          Icon(
-                            Icons.edit,
-                            color: TColor.primary,
-                            size: 18,
-                          )
-                        ],
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.yellow, // Màu nền của số xu
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.attach_money, // Icon xu
+                              color: Colors.black, // Màu của icon xu
+                              size: 16,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              user?.coin.toString() ?? "100", // Số xu kiếm được
+                              style: TextStyle(
+                                color: Colors.black, // Màu chữ của số xu
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      Text(
-                        "codeforany@gmail.com",
-                        style: TextStyle(
-                            color: TColor.secondaryText, fontSize: 16),
-                      )
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                          width: 12,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: Colors.yellow, // Màu nền của chấm tròn
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
                     ],
-                  ))
+                  ),
                 ],
               ),
             ),
@@ -93,7 +153,7 @@ class _AccountViewState extends State<AccountView> {
               icon: "assets/img/a_my_detail.png",
               onPressed: () {
                 Get.to( () => const MyDetailView() );
-                
+
               },
             ),
             AccountRow(
@@ -129,7 +189,7 @@ class _AccountViewState extends State<AccountView> {
               icon: "assets/img/a_noitification.png",
               onPressed: () {
                 Get.to(() => const NotificationListView() );
-                
+
               },
             ),
             AccountRow(
