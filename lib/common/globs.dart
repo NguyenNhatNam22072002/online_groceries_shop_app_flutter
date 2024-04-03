@@ -132,7 +132,7 @@ class Globs {
 }
 
 class SVKey {
-  static const mainUrl = "http://192.168.1.149:3001";
+  static const mainUrl = "http://172.16.20.248:3001";
 
   // Hàm để lấy IPv4 Address từ thiết bị
   static const baseUrl = '$mainUrl/api/app/';
